@@ -8,6 +8,10 @@ Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/).
 
 [Read my in-depth article on how I use Ralph](https://x.com/ryancarson/status/2008548371712135632)
 
+## NEED TO ADD THIS at the beginning
+study spec/readme.md
+study specs/analytics-implementation-plan.md and pick the most important thing to do
+
 ## Prerequisites
 
 - [Amp CLI](https://ampcode.com) installed and authenticated

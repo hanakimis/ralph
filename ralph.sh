@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROMPT_FILE="$SCRIPT_DIR/prompt.md"
 
 PRD_JSON="$PROJECT_DIR/prd.json"
-PROGRESS_LOG="$PROJECT_DIR/progress.txt"
+PROGRESS_LOG="$PROJECT_DIR/progress.md"
 
 echo "🚀 Starting Ralph loop"
 echo "📁 Project: $PROJECT_DIR"
@@ -47,16 +47,16 @@ for i in $(seq 1 "$MAX_ITERATIONS"); do
 ---
 State files:
 - @prd.json
-- @progress.txt
+- @progress.md
 
 Rules:
 1) Load prd.json (tasks with statuses).
-2) Load progress.txt (append-only log).
+2) Load progress.md (append-only log).
 3) Pick exactly ONE task where `passes: false` (highest priority).
 4) Implement that task and run relevant checks (tests/typecheck/lint).
 5) Commit changes with: feat: [ID] - [Title]
 6) Update prd.json for that task: set `passes` to true.
-7) Append learnings to progress.txt.
+7) Append learnings to progress.md.
 8) Stop after one task.
 If all tasks have passed, include: <promise>COMPLETE</promise>"
 

@@ -60,14 +60,14 @@ This creates `prd.json` with user stories structured for autonomous execution.
 ### 3. Run Ralph
 
 ```bash
-./scripts/ralph/ralph.sh [project_dir] [max_iterations]
+.ralph/ralph.sh [project_dir] [max_iterations]
 ```
 
 Defaults: current directory (`.`) and 10 iterations.
 
 Example:
 ```bash
-./scripts/ralph/ralph.sh ~/code/my-app 20
+.ralph/ralph.sh ~/code/my-app 20
 ```
 
 Ralph will:

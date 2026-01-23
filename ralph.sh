@@ -52,16 +52,28 @@ State files:
 Rules:
 1) Load prd.json (tasks with statuses).
 2) Load progress.md (append-only log).
-3) Pick exactly ONE task where `passes: false` (highest priority).
+3) Pick exactly ONE task where 'passes: false' (highest priority).
 4) Implement that task and run relevant checks (tests/typecheck/lint).
 5) Commit changes with: feat: [ID] - [Title]
-6) Update prd.json for that task: set `passes` to true.
+6) Update prd.json for that task: set 'passes' to true.
 7) Append learnings to progress.md.
 8) Stop after one task.
 If all tasks have passed, include: <promise>COMPLETE</promise>"
 
-  # Run Claude Code in fresh instance
-  RESULT="$(claude --permission-mode acceptEdits -p "$ITER_PROMPT" 2>&1 | tee /dev/stderr)" || true
+echo "🤖 Claude starting at $(date)"
+
+# Run Claude Code in fresh instance
+claude --permission-mode acceptEdits -p "$ITER_PROMPT" \
+  2>&1 | tee /dev/stderr &
+CLAUDE_PID=$!
+
+while kill -0 "$CLAUDE_PID" 2>/dev/null; do
+  echo "⏳ Claude still working... $(date)"
+  sleep 10
+done
+
+echo "✅ Claude finished at $(date)"
+
 
   # Durable stop check (based on prd.json contents)
   if ! grep -q '"passes"[[:space:]]*:[[:space:]]*false' "$PRD_JSON"; then

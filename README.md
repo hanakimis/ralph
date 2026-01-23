@@ -20,10 +20,10 @@ Copy the ralph files into your project:
 
 ```bash
 # From your project root
-mkdir -p scripts/ralph
-cp /path/to/ralph/ralph.sh scripts/ralph/
-cp /path/to/ralph/prompt.md scripts/ralph/
-chmod +x scripts/ralph/ralph.sh
+mkdir -p ralph
+cp /path/to/ralph/ralph.sh ralph/
+cp /path/to/ralph/prompt.md ralph/
+chmod +x ralph/ralph.sh
 ```
 
 ### Optional: Install skills globally

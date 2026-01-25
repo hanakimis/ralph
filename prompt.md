@@ -3,8 +3,8 @@
 ## Your Task
 
 1. Read `prd.json`
-2. Read `progress.md`
-3. Pick the highest-priority story where `"passes": false`
+2. Read the task-specific progress file (`progress/{task-id}.md`) provided in state
+3. Work on the task specified in the state (or pick the highest-priority story where `"passes": false`)
 
 ## Size Gate (MANDATORY)
 
@@ -22,7 +22,7 @@ Treat the story as TOO LARGE if ANY of the following are true:
    - Each subtask must be independently verifiable
    - Each subtask must have `"passes": false`
 2. Do NOT implement any code beyond PRD edits
-3. Append to `progress.md`:
+3. Append to the task-specific progress file (`progress/{task-id}.md`):
    - That the story was decomposed
    - The list of subtasks created
    - Which subtask will be tackled next
@@ -37,10 +37,10 @@ Continue below.
 5. Run typecheck and tests
 6. Update `prd.json`:
    - Set `"passes": true` for the finished story
-7. Append learnings to `progress.md`
+7. Append learnings to the task-specific progress file (`progress/{task-id}.md`)
 8. Commit with message: `feat: [ID] - [Title]`
 
-## Progress Format (append to progress.md)
+## Progress Format (append to task progress file)
 
 ## [Date] - [Story ID]
 - What was implemented

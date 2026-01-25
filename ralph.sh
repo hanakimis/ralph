@@ -13,14 +13,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROMPT_FILE="$SCRIPT_DIR/prompt.md"
 
 PRD_JSON="$PROJECT_DIR/prd.json"
-PROGRESS_LOG="$PROJECT_DIR/progress.md"
+PROGRESS_DIR="$PROJECT_DIR/progress"
 
 echo "🚀 Starting Ralph loop"
 echo "📁 Project: $PROJECT_DIR"
 echo "🧠 Prompt:  $PROMPT_FILE"
 echo "📋 PRD:     $PRD_JSON"
-echo "📘 Log:     $PROGRESS_LOG"
+echo "📂 Progress dir: $PROGRESS_DIR"
 echo "🔁 Max iterations: $MAX_ITERATIONS"
+
+if ! command -v jq &> /dev/null; then
+  echo "❌ jq is required but not installed"
+  exit 1
+fi
 
 if [[ ! -f "$PROMPT_FILE" ]]; then
   echo "❌ Missing prompt file: $PROMPT_FILE"
@@ -32,8 +37,8 @@ if [[ ! -f "$PRD_JSON" ]]; then
   exit 1
 fi
 
-# Ensure progress file exists
-touch "$PROGRESS_LOG"
+# Ensure progress directory exists
+mkdir -p "$PROGRESS_DIR"
 cd "$PROJECT_DIR"
 
 for i in $(seq 1 "$MAX_ITERATIONS"); do
@@ -41,22 +46,39 @@ for i in $(seq 1 "$MAX_ITERATIONS"); do
   echo "Iteration $i / $MAX_ITERATIONS"
   echo "════════════════════════════════"
 
+  # Find first task with passes: false (check subtasks first, then top-level tasks)
+  CURRENT_TASK_ID=$(jq -r '
+    (.[] | .subtasks[]? | select(.passes == false) | .id) //
+    (.[] | select(.passes == false) | .id) //
+    empty
+  ' "$PRD_JSON" | head -1)
+
+  if [[ -z "$CURRENT_TASK_ID" ]]; then
+    echo "✅ All tasks completed — exiting."
+    exit 0
+  fi
+
+  PROGRESS_LOG="$PROGRESS_DIR/${CURRENT_TASK_ID}.md"
+  touch "$PROGRESS_LOG"
+  echo "📋 Working on: $CURRENT_TASK_ID"
+  echo "📘 Progress:   $PROGRESS_LOG"
+
   # Build run prompt to feed Claude Code
   ITER_PROMPT="$(cat "$PROMPT_FILE")
 
 ---
 State files:
 - @prd.json
-- @progress.md
+- @progress/${CURRENT_TASK_ID}.md
 
 Rules:
 1) Load prd.json (tasks with statuses).
-2) Load progress.md (append-only log).
-3) Pick exactly ONE task where 'passes: false' (highest priority).
+2) Load progress/${CURRENT_TASK_ID}.md (append-only log for this task).
+3) Work on task: ${CURRENT_TASK_ID}
 4) Implement that task and run relevant checks (tests/typecheck/lint).
-5) Commit changes with: feat: [ID] - [Title]
+5) Commit changes with: feat: [${CURRENT_TASK_ID}] - [Title]
 6) Update prd.json for that task: set 'passes' to true.
-7) Append learnings to progress.md.
+7) Append learnings to progress/${CURRENT_TASK_ID}.md.
 8) Stop after one task.
 If all tasks have passed, include: <promise>COMPLETE</promise>"
 

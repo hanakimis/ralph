@@ -6,55 +6,31 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 
 function convertPrdToMarkdown(prd) {
   const lines = [];
 
   // Header
-  lines.push(`# PRD: ${prd.description}`);
+  lines.push(`# ${prd.project}`);
   lines.push('');
-  lines.push(`**Project:** ${prd.project}`);
   lines.push(`**Branch:** \`${prd.branchName}\``);
-  lines.push('');
-  lines.push('## Description');
   lines.push('');
   lines.push(prd.description);
   lines.push('');
-  lines.push('---');
-  lines.push('');
-  lines.push('## User Stories');
+  lines.push('## Tasks');
 
   // User Stories
   for (const story of prd.userStories) {
     lines.push('');
     lines.push(`### ${story.id}: ${story.title}`);
-    lines.push('');
-    lines.push(`**Priority:** ${story.priority}`);
-    lines.push(`**Status:** ${story.passes ? '✅ Complete' : '⬜ Pending'}`);
-    lines.push('');
-    lines.push(`> ${story.description}`);
-    lines.push('');
-    lines.push('#### Acceptance Criteria');
-    lines.push('');
 
     for (const criteria of story.acceptanceCriteria) {
       const checkbox = story.passes ? '[x]' : '[ ]';
       lines.push(`- ${checkbox} ${criteria}`);
     }
-
-    lines.push('');
-    lines.push('#### Notes');
-    lines.push('');
-    lines.push(story.notes?.trim() || '_No notes_');
-    lines.push('');
-    lines.push('---');
   }
 
-  // Remove trailing separator
-  lines.pop();
-
-  return lines.join('\n');
+  return lines.join('\n') + '\n';
 }
 
 function main() {
@@ -62,10 +38,6 @@ function main() {
 
   if (args.length < 1) {
     console.error('Usage: node prd-json-to-md.js <input.json> [output.md]');
-    console.error('');
-    console.error('Examples:');
-    console.error('  node prd-json-to-md.js prd.json');
-    console.error('  node prd-json-to-md.js prd.json prd.md');
     process.exit(1);
   }
 
